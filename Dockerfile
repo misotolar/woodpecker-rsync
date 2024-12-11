@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM misotolar/alpine:3.20.3
+FROM --platform=$BUILDPLATFORM misotolar/alpine:3.21.0
 
 LABEL maintainer="michal@sotolar.com"
 
@@ -15,6 +15,6 @@ RUN set -ex; \
         /var/tmp/* \
         /tmp/*
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY resources/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
