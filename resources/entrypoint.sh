@@ -4,29 +4,30 @@ set -e
 
 : "${PLUGIN_PORT:=22}"
 : "${PLUGIN_SOURCE:=./}"
+: "${PLUGIN_TARGET_REPO:=false}"
 : "${PLUGIN_TARGET_BRANCH:=false}"
 
 if [[ -z "$PLUGIN_REMOTE" ]]; then
-    print "Remote host not set.\n"
+    echo "Remote host not set.\n"
     exit 1
 fi
 
 if [[ -z "$PLUGIN_TARGET" ]]; then
-    print "Remote target not set.\n"
+    echo "Remote target not set.\n"
     exit 1
 fi
 
 if [[ -z "$PLUGIN_USERNAME" ]]; then
-    print "Remote user not set.\n"
+    echo "Remote user not set.\n"
     exit 1
 fi
 
 if [[ -z "$PLUGIN_PASSWORD" ]]; then
-    print "Remote password not set.\n"
+    echo "Remote password not set.\n"
     exit 1
 fi
 
-if [[ -z "$PLUGIN_ARGS" ]]; then 
+if [[ -z "$PLUGIN_ARGS" ]]; then
     PLUGIN_ARGS="-avz --delete"
 fi
 
@@ -49,6 +50,10 @@ for filter in "${FILTER[@]}"; do
 done
 
 EXPR="$EXPR $PLUGIN_SOURCE"
+
+if [ $PLUGIN_TARGET_REPO == true ]; then
+    PLUGIN_TARGET="$PLUGIN_TARGET/$CI_REPO"
+fi
 
 if [ $PLUGIN_TARGET_BRANCH == true ] && [ $CI_COMMIT_BRANCH != $CI_REPO_DEFAULT_BRANCH ]; then
     PLUGIN_TARGET="$PLUGIN_TARGET.$CI_COMMIT_BRANCH"
