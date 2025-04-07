@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM misotolar/alpine:3.21.2
+FROM --platform=$BUILDPLATFORM misotolar/alpine:3.21.3
 
 LABEL maintainer="michal@sotolar.com"
 

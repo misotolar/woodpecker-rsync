@@ -8,22 +8,22 @@ set -e
 : "${PLUGIN_TARGET_BRANCH:=false}"
 
 if [[ -z "$PLUGIN_REMOTE" ]]; then
-    echo "Remote host not set.\n"
+    printf "Remote host not set.\n"
     exit 1
 fi
 
 if [[ -z "$PLUGIN_TARGET" ]]; then
-    echo "Remote target not set.\n"
+    printf "Remote target not set.\n"
     exit 1
 fi
 
 if [[ -z "$PLUGIN_USERNAME" ]]; then
-    echo "Remote user not set.\n"
+    printf "Remote user not set.\n"
     exit 1
 fi
 
 if [[ -z "$PLUGIN_PASSWORD" ]]; then
-    echo "Remote password not set.\n"
+    printf "Remote password not set.\n"
     exit 1
 fi
 
@@ -32,7 +32,7 @@ if [[ -z "$PLUGIN_ARGS" ]]; then
 fi
 
 EXPR="rsync $PLUGIN_ARGS"
-EXPR="$EXPR -e 'sshpass -p %s ssh -p %s -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no'"
+EXPR="$EXPR -e 'sshpass -p $PLUGIN_PASSWORD ssh -p $PLUGIN_PORT -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no'"
 
 IFS=','; read -ra INCLUDE <<< "$PLUGIN_INCLUDE"
 for include in "${INCLUDE[@]}"; do
@@ -51,12 +51,12 @@ done
 
 EXPR="$EXPR $PLUGIN_SOURCE"
 
-if [ $PLUGIN_TARGET_REPO == true ]; then
+if [ "$PLUGIN_TARGET_REPO" == true ]; then
     PLUGIN_TARGET="$PLUGIN_TARGET/$CI_REPO"
 fi
 
-if [ $PLUGIN_TARGET_BRANCH == true ] && [ $CI_COMMIT_BRANCH != $CI_REPO_DEFAULT_BRANCH ]; then
+if [ "$PLUGIN_TARGET_BRANCH" == true ] && [ "$CI_COMMIT_BRANCH" != "$CI_REPO_DEFAULT_BRANCH" ]; then
     PLUGIN_TARGET="$PLUGIN_TARGET.$CI_COMMIT_BRANCH"
 fi
 
-eval "$(printf "$EXPR" "$PLUGIN_PASSWORD" "$PLUGIN_PORT") $PLUGIN_USERNAME@$PLUGIN_REMOTE:$PLUGIN_TARGET"
+eval "$EXPR $PLUGIN_USERNAME@$PLUGIN_REMOTE:$PLUGIN_TARGET"
